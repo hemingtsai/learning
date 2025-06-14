@@ -1,64 +1,42 @@
 #include <algorithm>
 #include <cstring>
 #include <iostream>
-#include <vector>
-
-class Dfs{
-private:
-    std::vector<std::vector<int>> graph;
-    std::vector<int> happiness_value;
-    std::vector<std::vector<int>> dp;
-
-    void _do_dfs(int u){
-        dp[u][0]=0;
-        dp[u][1]=happiness_value[u];
-        for(int v:graph[u]){
-            this->_do_dfs(v);
-            dp[u][1]+=dp[v][0];
-            dp[u][0]+=std::max(dp[v][0],dp[v][1]);
-        }
+const int maxn = 6e3+5;
+struct Edge{
+    int next;
+    int to;
+}edge[maxn];
+int head[maxn];
+int edge_cnt;
+int dp[maxn][2], val[maxn], father[maxn];
+void addedge(int from, int to){
+    edge[edge_cnt].to = to;
+    edge[edge_cnt].next = head[from];
+    head[from] = edge_cnt++;
+    father[to]=from;
+}
+void dfs(int u){
+    dp[u][0]=0;
+    dp[u][1]=val[u];
+    for(int i=head[u];i!=-1;i=edge[i].next){
+        int v =edge[i].to;
+        dfs(v);
+        dp[u][1]+=dp[v][0];
+        dp[u][0]+=std::max(dp[v][0],dp[v][1]);
     }
-
-public:
-    Dfs(std::vector<std::vector<int>> _graph,
-             std::vector<int> _happiness_value):graph(_graph), happiness_value(_happiness_value){};
-
-    int operator()(int u){
-        this->dp = std::vector<std::vector<int>>(this->graph.size(),std::vector<int>(2));
-        _do_dfs(u);
-        return std::max(dp[u][0],dp[u][1]);
+}
+int main(){
+    std::memset(head,-1,sizeof head);
+    int n;
+    std::cin >> n;
+    for(int i=1;i<n;i++){
+        int u,v;
+        std::cin >> u >> v;
+        addedge(v,u);
     }
-};
-
-int main() {
-  int nodes_sum;
-  std::cin >> nodes_sum;
-  std::vector<int> happiness_value(nodes_sum+1);
-  for (int i=1;i<=nodes_sum;i++) {
-    std::cin >> happiness_value[i];
-  }
-
-  std::vector<std::vector<int>> graph(nodes_sum+1, std::vector<int>());
-  int root = 0;
-  {
-    bool has_parent[nodes_sum+1];
-    std::memset(has_parent, 0, sizeof has_parent);
-    for (int i = 1; i < nodes_sum; i++) {
-      int child, father;
-      std::cin >> child >> father;
-      graph[father].push_back(child);
-      has_parent[child] = true;
-    }
-    for (int i = 1; i <= nodes_sum; i++) {
-      if (has_parent[i] == false) {
-        root = i;
-        break;
-      }
-    }
-  }
-
-  Dfs dfs(graph, happiness_value);
-  int ans = dfs(root);
-  std::cout<<ans;
-  return 0;
+    int root=1;
+    while(father[root]) root=father[root];
+    dfs(root);
+    std::cout << std::max(dp[root][0],dp[root][1]) << std::endl;
+    return 0;
 }
