@@ -7,7 +7,7 @@
     {
       "label": "Build",
       "type": "shell",
-      "command": "clang++ ${fileBasename} -o ${fileBasenameNoExtension} -g -std=c++20",
+      "command": "clang++ ${fileBasename} -o ${fileBasenameNoExtension} -g -std=c++23",
       "problemMatcher": [],
       "group": {
         "kind": "build"
@@ -16,7 +16,7 @@
     {
       "label": "Build and run",
       "type": "shell",
-      "command": "clang++ ${fileBasename} -o ${fileBasenameNoExtension} -g -std=c++20; echo \"编译完成\";./${fileBasenameNoExtension}",
+      "command": "clang++ ${fileBasename} -o ${fileBasenameNoExtension} -g -std=c++23; echo \"编译完成\";./${fileBasenameNoExtension}",
       "problemMatcher": [],
       "group": {
         "kind": "build",
