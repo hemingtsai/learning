@@ -14,6 +14,7 @@ struct Edge {
 
 int head[MAXN], edge_cnt;
 long long dist[MAXN];
+int pre[MAXN];
 bool visited[MAXN];
 
 struct Node {
@@ -33,6 +34,7 @@ void dijkstra(int start, int n) {
   std::memset(visited, false, sizeof(visited));
 
   dist[start] = 0;
+  pre[start] = -1;
   pq.push({start, 0});
 
   while (!pq.empty()) {
@@ -50,6 +52,7 @@ void dijkstra(int start, int n) {
 
       if (dist[v] > dist[u] + w) {
         dist[v] = dist[u] + w;
+        pre[v] = u;
         pq.push({v, dist[v]});
       }
     }
@@ -75,7 +78,18 @@ int main() {
 
   dijkstra(1, n);
 
-  std::printf("%lld", dist[n] == INF ? -1 : dist[n]);
+  if (dist[n] == INF) {
+    std::printf("-1\n");
+    return 0;
+  }
+
+  int path[MAXN], path_len = 0;
+  for (int v = n; v != -1; v = pre[v])
+    path[path_len++] = v;
+
+  for (int i = path_len - 1; i >= 0; i--)
+    std::printf("%d ", path[i]);
+  std::printf("\n");
 
   return 0;
 }

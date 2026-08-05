@@ -4,11 +4,11 @@
             "type": "lldb",
             "request": "launch",
             "name": "Launch",
-            "program": "${fileDirname}/${fileBasenameNoExtension}",
+            "program": "${workspaceFolder}/build/algo/dijkstra/re_dijkstra",
             "args": [],
             "cwd": "${workspaceFolder}"
         }
-        
+
 
     ]
 }

@@ -1,1 +1,4 @@
 .VSCodeCounter
+*.dSYM
+/build/
+__pycache__/
