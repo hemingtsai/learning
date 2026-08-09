@@ -65,20 +65,18 @@ while IFS= read -r f; do
     [[ -n "$f" ]] && remove_file "$f"
 done < <(find . -type f \( -name "*.o" -o -name "*.out" -o -name "a.out" \) -not -path "./.git/*")
 
-# 4. 与源码同名的编译产物（如 luogu/p1090 <- p1090.cpp）
-while IFS= read -r src; do
-    dir="$(dirname "$src")"
-    bin="$dir/$(basename "${src%.*}")"
-    [[ -e "$bin" && -f "$bin" ]] || continue
+# 4. 所有未被 git 跟踪的 Mach-O 可执行文件
+#    （不论文件名，覆盖 -o 自定义输出名等场景）
+while IFS= read -r f; do
     # 跳过被 git 跟踪的文件
-    if grep -qxF "$bin" <<<"$TRACKED"; then
+    if grep -qxF "$f" <<<"$TRACKED"; then
         continue
     fi
     # 仅删除真正的 Mach-O 可执行文件
-    if file "$bin" | grep -q "Mach-O.*executable"; then
-        remove_file "$bin"
+    if file "$f" 2>/dev/null | grep -q "Mach-O.*executable"; then
+        remove_file "$f"
     fi
-done < <(find . -type f \( -name "*.cpp" -o -name "*.c" -o -name "*.cc" -o -name "*.cxx" \) -not -path "./.git/*")
+done < <(find . -type f -not -path "./.git/*" -not -name "*.dSYM")
 
 echo
 if $DRY_RUN; then
